@@ -1,0 +1,19 @@
+set_io --warn-no-port LED_R7   C10
+set_io --warn-no-port LED_R6   A10
+set_io --warn-no-port LED_R5   D7
+set_io --warn-no-port LED_R4   D6
+set_io --warn-no-port LED_R3   A7
+set_io --warn-no-port LED_R2   C7
+set_io --warn-no-port LED_R1   A4
+set_io --warn-no-port LED_R0   C4
+
+set_io --warn-no-port LED_C0  A12
+set_io --warn-no-port LED_C1  D10
+set_io --warn-no-port LED_C2  A6
+set_io --warn-no-port LED_C3  C5
+
+set_io --warn-no-port BTN_1    A5
+set_io --warn-no-port BTN_2    A11
+set_io --warn-no-port BTN_RST  C11
+
+set_io --warn-no-port CLK    P7
