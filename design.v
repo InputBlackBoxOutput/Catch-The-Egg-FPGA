@@ -21,9 +21,9 @@ module design(
 	);
 	
 	reg STOP = 1;
-	reg [22:0] TICK_COUNTER = 23'b0;
+	reg [22:0] TICK_COUNTER;
 
-	reg [11:0] COUNTER = 12'b0;
+	reg [11:0] COUNTER;
 	reg [7:0]  LED_R; 
 	reg [3:0]  LED_C;
 	reg [7:0]  LED_MATRIX [3:0];
@@ -39,70 +39,63 @@ module design(
 	reg [31:0] RND = 32'hA3D0_4F56;
 	reg [4:0]  RND_INDEX = 0;
 
-	initial begin
-		LED_MATRIX[0] = 8'h00;
-		LED_MATRIX[1] = 8'h00;
-		LED_MATRIX[2] = 8'h00;
-		LED_MATRIX[3] = 8'h18;
-	end
-
 	always@(posedge CLK) begin
 		if(!STOP) begin
 			RESYNC_BTN1 <= {RESYNC_BTN1[2:0], BTN_1 == 0};
 			RESYNC_BTN2 <= {RESYNC_BTN2[2:0], BTN_2 == 0};  
-			
+
 			// If the move right button is pressed move bucket to the right
 			if(~RESYNC_BTN1[3] & RESYNC_BTN1[2]) begin
 				if(BUCKET_POSITION != 7) begin
-					LED_MATRIX[3] = LED_MATRIX[3] >> 1;
-					BUCKET_POSITION =  BUCKET_POSITION + 1;
+					LED_MATRIX[3] <= LED_MATRIX[3] >> 1;
+					BUCKET_POSITION <=  BUCKET_POSITION + 1;
 				end
 			end
 
 			// If the move left button is pressed move bucket to the left
 			if(~RESYNC_BTN2[3] & RESYNC_BTN2[2]) begin
 				if(BUCKET_POSITION != 1) begin
-					LED_MATRIX[3] = LED_MATRIX[3] << 1;
-					BUCKET_POSITION = BUCKET_POSITION - 1;
+					LED_MATRIX[3] <= LED_MATRIX[3] << 1;
+					BUCKET_POSITION <= BUCKET_POSITION - 1;
 				end
 			end
 
 			// Generate egg and drop straight down as per the laws of physics :-)
 			if(TICK_COUNTER == 0) begin
-				LED_MATRIX[0] = 0;
-				LED_MATRIX[1] = 0;
-				LED_MATRIX[2] = 0;
+				LED_MATRIX[0] <= 0;
+				LED_MATRIX[1] <= 0;
+				LED_MATRIX[2] <= 0;
 
 				if(EGG_POSITION_Y == 0) begin 
 					EGG_POSITION_X = RND[RND_INDEX + 2: RND_INDEX];
 					RND_INDEX = RND_INDEX + 1;
 				end
 
-				if(EGG_POSITION_Y != 3) begin
-					LED_MATRIX[EGG_POSITION_Y] = 1 << EGG_POSITION_X;
-				end
-				EGG_POSITION_Y = EGG_POSITION_Y + 1;
+				if(EGG_POSITION_Y != 3)
+					LED_MATRIX[EGG_POSITION_Y] <= 1 << EGG_POSITION_X;
+
+				EGG_POSITION_Y <= EGG_POSITION_Y + 1;
 			end
 
 			// Check if the egg has been caught in the basket
 			if(TICK_COUNTER == 0 && EGG_POSITION_Y == 3) begin
 				if(!(LED_MATRIX[3] & (1 << EGG_POSITION_X)))
-					STOP = 1;
+					STOP <= 1;
 			end
 		end
 		else begin
-			LED_MATRIX[0] = 8'h00;
-			LED_MATRIX[1] = 8'h00;
-			LED_MATRIX[2] = 8'h00;
-			LED_MATRIX[3] = 8'h00;
+			LED_MATRIX[0] <= 8'h00;
+			LED_MATRIX[1] <= 8'h00;
+			LED_MATRIX[2] <= 8'h00;
+			LED_MATRIX[3] <= 8'h00;
 
 			// Check for reset signal
 			RESYNC_BTN_RST <= {RESYNC_BTN_RST[2:0], BTN_RST == 0};
 			
 			if(~RESYNC_BTN_RST[3] & RESYNC_BTN_RST[2]) begin
-				STOP = 0;
-				LED_MATRIX[3] = 8'h18;
-				BUCKET_POSITION = 8'h04;
+				STOP <= 0;
+				LED_MATRIX[3] <= 8'h18;
+				BUCKET_POSITION <= 8'h04;
 			end
 				
 		end
