@@ -20,7 +20,7 @@ module design(
 	input BTN_RST
 	);
 	
-	reg STOP = 1;
+	reg STOP;
 	reg [22:0] TICK_COUNTER;
 
 	reg [11:0] COUNTER;
@@ -32,12 +32,12 @@ module design(
 	reg [3:0] RESYNC_BTN2;
 	reg [3:0] RESYNC_BTN_RST;
 
-	reg [7:0] BUCKET_POSITION = 8'h04;
-	reg [2:0] EGG_POSITION_X = 2'b000;
-	reg [1:0] EGG_POSITION_Y = 2'b00;
+	reg [7:0] BUCKET_POSITION;
+	reg [2:0] EGG_POSITION_X;
+	reg [1:0] EGG_POSITION_Y;
 
-	reg [31:0] RND = 32'hA3D0_4F56;
-	reg [4:0]  RND_INDEX = 0;
+	reg [31:0] RND;
+	reg [4:0]  RND_INDEX;
 
 	always@(posedge CLK) begin
 		if(!STOP) begin
@@ -96,6 +96,7 @@ module design(
 				STOP <= 0;
 				LED_MATRIX[3] <= 8'h18;
 				BUCKET_POSITION <= 8'h04;
+				RND <= 32'hA3D0_4F56;
 			end
 				
 		end
@@ -123,8 +124,8 @@ module design(
     end
 	
 	always@(posedge CLK) begin
-		COUNTER = COUNTER + 1;
-		TICK_COUNTER = TICK_COUNTER + 1;
+		COUNTER <= COUNTER + 1;
+		TICK_COUNTER <= TICK_COUNTER + 1;
 	end
 
 	assign {LED_R7, LED_R6, LED_R5, LED_R4, LED_R3, LED_R2, LED_R1, LED_R0} = LED_R;
