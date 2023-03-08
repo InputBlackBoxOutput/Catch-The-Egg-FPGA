@@ -40,7 +40,7 @@ module design(
 	reg [4:0]  RND_INDEX;
 
 	always@(posedge CLK) begin
-		if(!STOP) begin
+		if(STOP) begin
 			RESYNC_BTN1 <= {RESYNC_BTN1[2:0], BTN_1 == 0};
 			RESYNC_BTN2 <= {RESYNC_BTN2[2:0], BTN_2 == 0};  
 
@@ -80,7 +80,7 @@ module design(
 			// Check if the egg has been caught in the basket
 			if(TICK_COUNTER == 0 && EGG_POSITION_Y == 3) begin
 				if(!(LED_MATRIX[3] & (1 << EGG_POSITION_X)))
-					STOP <= 1;
+					STOP <= 0;
 			end
 		end
 		else begin
@@ -93,7 +93,7 @@ module design(
 			RESYNC_BTN_RST <= {RESYNC_BTN_RST[2:0], BTN_RST == 0};
 			
 			if(~RESYNC_BTN_RST[3] & RESYNC_BTN_RST[2]) begin
-				STOP <= 0;
+				STOP <= 1;
 				LED_MATRIX[3] <= 8'h18;
 				BUCKET_POSITION <= 8'h04;
 				RND <= 32'hA3D0_4F56;
