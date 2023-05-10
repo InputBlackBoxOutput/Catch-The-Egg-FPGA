@@ -1,0 +1,30 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Thu Mar  9 03:54:05 2023
+[*]
+[dumpfile] "/home/blackbox/Desktop/Catch-The-Egg-FPGA/dump.vcd"
+[dumpfile_mtime] "Thu Mar  9 03:52:46 2023"
+[dumpfile_size] 2974190
+[savefile] "/home/blackbox/Desktop/Catch-The-Egg-FPGA/wave.gtkw"
+[timestart] 0
+[size] 1830 1009
+[pos] -51 -51
+*-27.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[sst_width] 273
+[signals_width] 210
+[sst_expanded] 1
+[sst_vpaned_height] 279
+@29
+testbench.g.CLK
+@28
+testbench.g.BTN_1
+testbench.g.BTN_2
+testbench.g.BTN_RST
+@22
+testbench.g.COUNTER[11:0]
+testbench.g.TICK_COUNTER[22:0]
+testbench.g.LED_R[7:0]
+testbench.g.LED_C[3:0]
+[pattern_trace] 1
+[pattern_trace] 0

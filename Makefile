@@ -1,10 +1,11 @@
 .PHONY: burn clean
 
-all: burn
+all:
+	$(info Please specify operation)
 
 burn: clean
 	# Synthesize using Yosys
-	yosys -p "synth_ice40 -top design -json yosys-opt.json" design.v
+	yosys -p "synth_ice40 -top game -json yosys-opt.json" design.v
 	
 	# Place and route using nextpnr
 	nextpnr-ice40 -r --hx8k --json yosys-opt.json --package cb132 --asc nextpnr-opt.asc --opt-timing --pcf iceFUN.pcf
@@ -14,5 +15,11 @@ burn: clean
 
 	sudo iceFUNprog design.bin
 
+sim: clean
+	iverilog -o  design_tb.vvp  design_tb.v
+	/usr/bin/vvp  design_tb.vvp
+	gtkwave dump.vcd
+
 clean:
 	rm -rf *.asc *.bin *blif *.json
+	rm -rf *.vvp dump.vcd
