@@ -3,6 +3,7 @@
 all:
 	$(info Please specify operation)
 
+# Burn the design onto the FPGA
 burn: clean
 	# Synthesize using Yosys
 	yosys -p "synth_ice40 -top game -json yosys-opt.json" design.v
@@ -15,11 +16,16 @@ burn: clean
 
 	sudo iceFUNprog design.bin
 
+# Simulate the design using Icarus Verilog
 sim: clean
 	iverilog -o  design_tb.vvp  design_tb.v
 	/usr/bin/vvp  design_tb.vvp
+
+# Load the waveform viewer to see simulation results
+wave: sim
 	gtkwave dump.vcd
 
+# Clean up generated files
 clean:
 	rm -rf *.asc *.bin *blif *.json
 	rm -rf *.vvp dump.vcd
