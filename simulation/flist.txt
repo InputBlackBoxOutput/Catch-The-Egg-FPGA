@@ -1,0 +1,6 @@
+counter.v
+debounce.v
+lfsr.v
+display.v
+design.v
+design_tb.v

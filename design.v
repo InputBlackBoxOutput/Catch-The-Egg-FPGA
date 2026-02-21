@@ -1,133 +1,135 @@
-module game(    
-    input CLK, 
+module game(
+    input clk,
     
-    output LED_R0, 
-    output LED_R1, 
-    output LED_R2, 
-    output LED_R3, 
-    output LED_R4, 
-    output LED_R5, 
-    output LED_R6, 
-    output LED_R7,
+    input btn_1,       // Move right  [Active low]
+    input btn_2,       // Move left   [Active low]
+    input btn_rst,     // Reset/start [Active low]
 
-    output LED_C0, 
-    output LED_C1, 
-    output LED_C2, 
-    output LED_C3,
+    output led_r0, 
+    output led_r1, 
+    output led_r2, 
+    output led_r3, 
+    output led_r4, 
+    output led_r5, 
+    output led_r6, 
+    output led_r7,
     
-    input BTN_1,
-    input BTN_2,
-    input BTN_RST
+    output led_c0, 
+    output led_c1, 
+    output led_c2, 
+    output led_c3
+);
+
+    // Debounce button
+    wire rst;
+    wire right;
+    wire left;
+
+    debounce db_rst(
+        .clk(clk), 
+        .btn(btn_rst), 
+        .pulse(rst)
     );
+    debounce db_right(
+        .clk(clk), 
+        .btn(btn_1), 
+        .pulse(right)
+    );
+    debounce db_left(
+        .clk(clk), 
+        .btn(btn_2), 
+        .pulse(left)
+    );
+
+    // Use a smaller counter width for simulation to speed it up
+    `ifdef SIM
+        parameter WIDTH = 4;
+    `else
+        parameter WIDTH = 22;
+    `endif
+
+    // Generate game tick
+    wire [WIDTH : 0] tick_count;
+    wire tick = (tick_count == 8'd0);
+
+    counter #(.N(WIDTH)) tick_counter (
+        .clk(clk),
+        .rst(~rst),
+        .count(tick_count)
+    );
+
+    // Render bucket and eggs using 8x8 LED matrix
+    reg check;
     
-    reg STOP;
-    reg [22:0] TICK_COUNTER = 0;
+    reg [31:0] egg;
+    reg [1:0] x;
+    
+    reg [7:0] bucket;
+    reg [2:0] y;
+    
+    wire [2:0] rnd;
+    lfsr8 rng (
+        .trigger(x == 2'b00), 
+        .rnd(rnd)
+    );
 
-    reg [11:0] COUNTER = 0;
-    reg [7:0]  LED_R; 
-    reg [3:0]  LED_C;
-    reg [7:0]  LED_MATRIX [3:0];
-
-    reg [3:0] RESYNC_BTN1;
-    reg [3:0] RESYNC_BTN2;
-    reg [3:0] RESYNC_BTN_RST;
-
-    reg [7:0] BUCKET_POSITION;
-    reg [2:0] EGG_POSITION_X;
-    reg [1:0] EGG_POSITION_Y;
-
-    reg [63:0] RND;
-
-    always@(posedge CLK) begin
-        if(STOP) begin
-            RESYNC_BTN1 <= {RESYNC_BTN1[2:0], BTN_1 == 0};
-            RESYNC_BTN2 <= {RESYNC_BTN2[2:0], BTN_2 == 0};  
-
-            // If the move right button is pressed move bucket to the right
-            if(~RESYNC_BTN1[3] & RESYNC_BTN1[2]) begin
-                if(BUCKET_POSITION != 7) begin
-                    LED_MATRIX[3] <= LED_MATRIX[3] >> 1;
-                    BUCKET_POSITION <=  BUCKET_POSITION + 1;
-                end
-            end
-
-            // If the move left button is pressed move bucket to the left
-            if(~RESYNC_BTN2[3] & RESYNC_BTN2[2]) begin
-                if(BUCKET_POSITION != 1) begin
-                    LED_MATRIX[3] <= LED_MATRIX[3] << 1;
-                    BUCKET_POSITION <= BUCKET_POSITION - 1;
-                end
-            end
-
-            // Generate egg and drop straight down as per the laws of physics :-)
-            if(TICK_COUNTER == 0) begin
-                LED_MATRIX[0] <= 0;
-                LED_MATRIX[1] <= 0;
-                LED_MATRIX[2] <= 0;
-
-                if(EGG_POSITION_Y == 0) begin 
-					EGG_POSITION_X = RND[2: 0];
-					RND = (RND >> 1) ^ RND;
-                end
-
-                if(EGG_POSITION_Y != 3)
-                    LED_MATRIX[EGG_POSITION_Y] <= 1 << EGG_POSITION_X;
-
-                EGG_POSITION_Y <= EGG_POSITION_Y + 1;
-            end
-
-            // Check if the egg has been caught in the basket
-            if(TICK_COUNTER == 0 && EGG_POSITION_Y == 3) begin
-                if(!(LED_MATRIX[3] & (1 << EGG_POSITION_X)))
-                    STOP <= 0;
-            end
-        end
+    always @(posedge clk) begin
+        if (rst) begin
+            check <= 1;
+            bucket <= 8'h18;
+            egg <= 32'h0000_0000;
+            x <= 2'd0;
+            y <= 3'd4;
+        end 
         else begin
-            LED_MATRIX[0] <= 8'h00;
-            LED_MATRIX[1] <= 8'h00;
-            LED_MATRIX[2] <= 8'h00;
-            LED_MATRIX[3] <= 8'h00;
+            if(check) begin
+                // Generate egg at the top row and move it down every tick
+                if (tick) begin
+                    case (x)
+                        2'b00: egg <= (egg & 32'h0000_00FF) | (8'h01 << rnd) << 24;
+                        2'b01: egg <= (egg & 32'h0000_00FF) | (8'h01 << rnd) << 16;
+                        2'b10: egg <= (egg & 32'h0000_00FF) | (8'h01 << rnd) << 8;
+                        2'b11: egg <= 32'h0;
+                    endcase
 
-            // Check for reset signal
-            RESYNC_BTN_RST <= {RESYNC_BTN_RST[2:0], BTN_RST == 0};
-            
-            if(~RESYNC_BTN_RST[3] & RESYNC_BTN_RST[2]) begin
-                STOP <= 1;
-                LED_MATRIX[3] <= 8'h18;
-                BUCKET_POSITION <= 8'h04;
-                RND <= 64'hA3D0_4F06_B2D4_9087;
+                    x <= x + 1;
+                end
+
+                // Move bucket left or right based on button presses
+                if (right && y < 6) begin
+                    bucket <= bucket >> 1;
+                    y <= y + 1;
+                end
+                if (left && y > 1) begin
+                    bucket <= bucket << 1;
+                    y <= y - 1;
+                end
+
+
+                // Check if the egg was caught
+                if(tick && (x == 2'b11)) begin
+                    if (((bucket & (8'h01 << rnd)) == 0)) begin
+                        check <= 0; 
+                    end
+                end
             end
-                
+            else begin
+                bucket <= 8'h18;
+                y <= 0;
+                egg <= 32'h0000_0000;
+                x <= 0;
+            end
         end
     end
 
-    always@(posedge CLK) begin
-        case (COUNTER[11:10])
-            2'b00: begin
-                LED_R[7:0] <= ~LED_MATRIX[0];
-                LED_C[3:0] <= ~4'b0001;
-            end        
-            2'b01: begin
-                LED_R[7:0] <= ~LED_MATRIX[1];
-                LED_C[3:0] <= ~4'b0010;
-            end        
-            2'b10: begin
-                LED_R[7:0] <= ~LED_MATRIX[2];
-                LED_C[3:0] <= ~4'b0100;
-            end        
-            2'b11: begin
-                LED_R[7:0] <= ~LED_MATRIX[3];
-                LED_C[3:0] <= ~4'b1000;
-            end        
-        endcase
-    end
-    
-    always@(posedge CLK) begin
-        COUNTER <= COUNTER + 1;
-        TICK_COUNTER <= TICK_COUNTER + 1;
-    end
+    // Display multiplexing logic
+    wire [31:0] led_matrix = egg | {24'd0, bucket};
 
-    assign {LED_R7, LED_R6, LED_R5, LED_R4, LED_R3, LED_R2, LED_R1, LED_R0} = LED_R;
-    assign {LED_C0, LED_C1, LED_C2, LED_C3} = LED_C;
-
+    display display(
+        .clk(clk), 
+        .rst(~rst),
+        .led_matrix(led_matrix),
+        .led_r({led_r7, led_r6, led_r5, led_r4, led_r3, led_r2, led_r1, led_r0}), 
+        .led_c({led_c3, led_c2, led_c1, led_c0})
+    );
 endmodule

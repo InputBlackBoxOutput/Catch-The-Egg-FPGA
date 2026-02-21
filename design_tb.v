@@ -1,69 +1,81 @@
 `timescale 10ns/10ps
-`include "design.v"
-
+// Note: do not `include "design.v"` here - the build compiles source files separately
 module testbench;
 
-    reg CLK = 0;
-    always #1 CLK = ~CLK; 
+    // Generate clk signal
+    reg clk = 0;
+    always begin
+       #1 clk = ~clk; 
+    end 
 
-    wire LED_R0; 
-    wire LED_R1; 
-    wire LED_R2; 
-    wire LED_R3;
-    wire LED_R4; 
-    wire LED_R5; 
-    wire LED_R6; 
-    wire LED_R7;
-
-    wire LED_C0; 
-    wire LED_C1; 
-    wire LED_C2; 
-    wire LED_C3;
-    
-    reg BTN_1;
-    reg BTN_2;
-    reg BTN_RST;
-
-    game g(
-    .CLK(CLK), 
-    
-    .LED_R0(LED_R0),
-    .LED_R1(LED_R1),
-    .LED_R2(LED_R2),
-    .LED_R3(LED_R3),
-    .LED_R4(LED_R4),
-    .LED_R5(LED_R5),
-    .LED_R6(LED_R6),
-    .LED_R7(LED_R7),
-
-    .LED_C0(LED_C0),
-    .LED_C1(LED_C1),
-    .LED_C2(LED_C2),
-    .LED_C3(LED_C3),
-    
-    .BTN_1(BTN_1),
-    .BTN_2(BTN_2),
-    .BTN_RST(BTN_RST)
-    );
-
+    // Generate reset signal and mimic reset button press
+    reg btn_rst;
     initial begin
-        $dumpfile("simulation/dump.vcd");
-        $dumpvars(0, g);
+        #0 btn_rst = 0; 
+        #5 btn_rst = 1;
+        #5 btn_rst = 0; 
     end
 
+    // DUT signals
+    wire led_r0; 
+    wire led_r1; 
+    wire led_r2; 
+    wire led_r3;
+    wire led_r4; 
+    wire led_r5; 
+    wire led_r6; 
+    wire led_r7;
+    wire [7:0] led_r = {led_r7, led_r6, led_r5, led_r4, led_r3, led_r2, led_r1, led_r0};
+
+    wire led_c0; 
+    wire led_c1; 
+    wire led_c2; 
+    wire led_c3;
+    wire [3:0] led_c = {led_c3, led_c2, led_c1, led_c0};
+ 
+    reg btn_1;
+    reg btn_2;
+
+    // DUT instantiation
+    game dut(
+    .clk(clk), 
     
+    .led_r0(led_r0),
+    .led_r1(led_r1),
+    .led_r2(led_r2),
+    .led_r3(led_r3),
+    .led_r4(led_r4),
+    .led_r5(led_r5),
+    .led_r6(led_r6),
+    .led_r7(led_r7),
+
+    .led_c0(led_c0),
+    .led_c1(led_c1),
+    .led_c2(led_c2),
+    .led_c3(led_c3),
+    
+    .btn_1(btn_1),
+    .btn_2(btn_2),
+    .btn_rst(btn_rst)
+    );
+
+    // Setup VCD dump for waveform viewing
     initial begin
-        $display("Simluation started");
-        $display("Simluation ended");
+        $dumpfile("simulation/dump.vcd");
+        $dumpvars(0, dut);
+    end
 
-        // Buttons are active low
-        BTN_1 = 1;
-        BTN_2 = 1;
-        BTN_RST = 1;
+    // Run simulation
+    integer i;
+    initial begin
+        $display("Simulation started");
+        
+        for(i = 0; i < 100; i++) begin
+            #(20_000);
+            $display("Simulation time: %0t ns", $time);
+        end
 
-        #4 BTN_RST = 0;
-        #2 BTN_RST = 1;
-
-        #100000 $finish();
+        $display("Simulation ended");
+        $finish();
     end
 endmodule
