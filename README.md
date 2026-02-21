@@ -11,6 +11,25 @@
 
 ![image](https://user-images.githubusercontent.com/53337979/215928973-cb32a23e-d5d2-4eee-bb6e-e6c8b51495e3.png)
 
+## Simulation
+```
+# Run simulation using Icarus Verilog
+make sim
+
+# Run simulation and view the waveform using GTKWave
+make wave
+```
+
+## Bitstream generation
+```
+# Generate the FPGA bitstream
+make bitstream
+
+# Genrate bitstream and burn it onto the FPGA
+chmod +x iceFUNprog
+make burn
+```
+
 ## Future development
 - True random number generation using LFSR with ADC value as seed
 - Sound effects using the buzzer

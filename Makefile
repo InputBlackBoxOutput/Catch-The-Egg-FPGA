@@ -3,18 +3,20 @@
 all:
 	$(info Please specify operation)
 
-# Burn the design onto the FPGA
-burn: clean
+# Generate the FPGA bitstream
+bitstream:
 	# Synthesize using Yosys
 	yosys -p "synth_ice40 -top game -json yosys-opt.json" design.v
 	
 	# Place and route using nextpnr
-	nextpnr-ice40 -r --hx8k --json yosys-opt.json --package cb132 --asc nextpnr-opt.asc --opt-timing --pcf iceFUN.pcf
+	nextpnr-ice40 -r --hx8k --json yosys-opt.json --package cb132 --asc nextpnr-opt.asc --opt-timing --pcf constraint.pcf
 
 	# Convert to bitstream using IcePack
 	icepack nextpnr-opt.asc design.bin
 
-	sudo iceFUNprog design.bin
+# Burn the design onto the FPGA
+burn: clean bitstream
+	sudo ./iceFUNprog design.bin
 
 # Simulate the design using Icarus Verilog
 sim: clean
