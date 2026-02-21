@@ -1,23 +1,12 @@
-# Build artifacts
+# Simulation outputs
+*.vcd
+
+# Bitstream artifacts
 *.asc
 *.bin
 *.blif
 *.json
 *.vvp
-
-# Simulation outputs
-dump.vcd
-wave.gtkw
-*.vcd
-
-# Yosys outputs
-yosys-opt.json
-
-# Tool nextpnr outputs
-nextpnr-opt.asc
-
-# IcePack outputs
-design.bin
 
 # Backup files
 *~
@@ -27,3 +16,6 @@ design.bin
 # OS files
 .DS_Store
 Thumbs.db
+
+# Icestorm build files
+/icestorm

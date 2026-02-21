@@ -47,7 +47,7 @@ module testbench;
     );
 
     initial begin
-        $dumpfile("dump.vcd");
+        $dumpfile("simulation/dump.vcd");
         $dumpvars(0, g);
     end
 
