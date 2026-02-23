@@ -23,8 +23,8 @@ module display(
     wire update = (count == 0);
 
     reg [1:0] select;
-    always @(posedge update or negedge rst) begin
-        if(~rst) begin
+    always @(posedge update or posedge rst) begin
+        if(rst) begin
             select <= 0;
             led_r <= 0;
             led_c <= 0;

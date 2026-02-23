@@ -3,8 +3,8 @@ module counter #(parameter N=8) (
     input rst,
     output reg [N-1:0] count
 );
-    always @(posedge clk or negedge rst) begin
-        if (~rst) begin
+    always @(posedge clk or posedge rst) begin
+        if(rst) begin
             count <= 0;
         end 
         else begin

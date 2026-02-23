@@ -11,9 +11,9 @@ module testbench;
     // Generate reset signal and mimic reset button press
     reg btn_rst;
     initial begin
-        #0 btn_rst = 0; 
-        #5 btn_rst = 1;
-        #5 btn_rst = 0; 
+        #0 btn_rst = 1; 
+        #5 btn_rst = 0;
+        #5 btn_rst = 1; 
     end
 
     // DUT signals
