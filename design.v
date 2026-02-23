@@ -33,7 +33,7 @@ module game(
     `ifdef SIM
         parameter WIDTH = 4;
     `else
-        parameter WIDTH = 22;
+        parameter WIDTH = 23;
     `endif
 
     // Generate game tick
@@ -57,21 +57,26 @@ module game(
     always @(posedge clk or posedge rst) begin
         if(rst) begin
             bucket <= 8'h18;
-            y <= 3'd4;
+            y <= 3'd3;
         end
         else begin
-            if (right && y < 6) begin
-                bucket <= bucket >> 1;
-                y <= y + 1;
+            if(check) begin
+                if (right && y < 6) begin
+                    bucket <= bucket >> 1;
+                    y <= y + 1;
+                end
+                
+                if (left && y > 0) begin
+                    bucket <= bucket << 1;
+                    y <= y - 1;
+                end
             end
-            
-            if (left && y > 1) begin
-                bucket <= bucket << 1;
-                y <= y - 1;
+            else begin
+                bucket <= 8'h18;
+                y <= 3'd3;
             end
         end
     end
-
 
     reg [31:0] egg;
     reg [1:0] x;
@@ -83,7 +88,7 @@ module game(
             x <= 2'd0;
         end
         else begin
-            if(tick) begin
+            if(tick && check) begin
                 case (x)
                     2'b00: egg <= (egg & 32'h0000_00FF) | (8'h01 << rnd) << 24;
                     2'b01: egg <= (egg & 32'h0000_00FF) | (8'h01 << rnd) << 16;
