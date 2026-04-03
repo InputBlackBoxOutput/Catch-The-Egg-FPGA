@@ -65,15 +65,61 @@ module testbench;
         $dumpvars(0, dut);
     end
 
+    // Tasks to simulate button presses
+    task press_btn1;
+        begin
+            #0  btn_1 = 0;
+            #10 btn_1 = 1;
+        end
+    endtask
+
+    task press_btn2;
+        begin
+            #0  btn_2 = 0;
+            #10 btn_2 = 1;
+        end
+    endtask
+
+    // Simulate button presses
+    initial begin
+        #0 btn_1 = 1;
+        #0 btn_2 = 1;
+
+        // Check if bucket moved right
+        #10 press_btn1();
+        #6; // Wait 3 clk cycles 
+        if(dut.y != 4 || dut.bucket != 8'h0C) begin 
+            $error("Bucket should move right");
+        end
+
+        // Press button, wait 3 clk cycles and check if bucket moved right
+        #10 press_btn2();
+        #10 press_btn2();
+        #6; // Wait 3 clk cycles
+        if(dut.y != 2 || dut.bucket != 8'h30) begin 
+            $error("Bucket should move left");
+        end
+    end
+
+    // Check if egg is generated correctly
+    always @(posedge clk) begin
+        if(dut.tick && !dut.rst) begin
+            #2; // Wait 1 clk cycles 
+            case(dut.x)
+                2'b00: if (dut.egg != 0) $error("Egg should be cleared after row 3");
+                2'b01: if ((dut.egg & 32'hFF00_0000) == 0) $error("Egg should be generated in row 0");
+                2'b10: if ((dut.egg & 32'h00FF_0000) == 0) $error("Egg should be generated in row 1");
+                2'b11: if ((dut.egg & 32'h0000_FF00) == 0) $error("Egg should be generated in row 2");
+            endcase
+        end 
+    end
+
     // Run simulation
-    integer i;
     initial begin
         $display("Simulation started");
         
-        for(i = 0; i < 100; i++) begin
-            #(20_000);
-            $display("Simulation time: %0t ns", $time);
-        end
+        #(200);
+        $display("Simulation time: %0t ns", $time);
 
         $display("Simulation ended");
         $finish();

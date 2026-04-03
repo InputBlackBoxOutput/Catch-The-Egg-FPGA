@@ -12,7 +12,7 @@ module display(
         parameter WIDTH = 16;
     `endif
 
-    wire [WIDTH:0] count;
+    wire [WIDTH-1 : 0] count;
     
     counter #(.N(WIDTH)) display_counter (
         .clk(clk),

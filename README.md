@@ -31,7 +31,8 @@ make burn
 ```
 
 ## Future development
-- True random number generation using LFSR with ADC value as seed
+- Game over screen using the LED matrix
+- Seed LFSR using random ADC value collected using USART
 - Sound effects using the buzzer
 
 ### Made with lots of ⏱️, 📚 and ☕ by InputBlackBoxOutput

@@ -1,21 +1,39 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Sat Feb 21 16:38:17 2026
+[*] Mon Feb 23 16:26:12 2026
 [*]
 [dumpfile] "/home/blackbox/Desktop/Catch-The-Egg-FPGA/simulation/dump.vcd"
-[dumpfile_mtime] "Sat Feb 21 16:38:05 2026"
-[dumpfile_size] 2974245
+[dumpfile_mtime] "Mon Feb 23 16:25:52 2026"
+[dumpfile_size] 8538
 [savefile] "/home/blackbox/Desktop/Catch-The-Egg-FPGA/simulation/wave.gtkw"
 [timestart] 0
-[size] 1000 600
+[size] 1854 1001
 [pos] -1 -1
-*0.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-18.299999 2000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
+[treeopen] testbench.dut.
 [sst_width] 278
-[signals_width] 78
+[signals_width] 118
 [sst_expanded] 1
-[sst_vpaned_height] 157
+[sst_vpaned_height] 280
 @28
-testbench.g.CLK
+testbench.dut.clk
+testbench.dut.btn_rst
+testbench.dut.db_rst.pulse
+@22
+testbench.dut.tick_counter.count[3:0]
+@28
+testbench.dut.tick
+testbench.dut.db_left.pulse
+@29
+testbench.dut.db_right.pulse
+@28
+testbench.dut.y[2:0]
+@22
+testbench.dut.bucket[7:0]
+@28
+testbench.dut.x[1:0]
+@22
+testbench.dut.egg[31:0]
 [pattern_trace] 1
 [pattern_trace] 0
