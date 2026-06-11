@@ -1,15 +1,20 @@
 # Catch the Egg FPGA
 
-'Catch the Egg' is a simple yet fun game. The objective of the game is to catch all the eggs which are falling from the sky in our basket. If you are unable to catch an egg, you lose the game. This is an implementation of the Catch-The-Egg game on an FPGA.
+Catch the Egg is a simple game with the objective to catch all the falling eggs in a basket. If you miss an egg, you lose the game. This repository contains an implmentation of the game on an FPGA
 
-![image](https://user-images.githubusercontent.com/53337979/215928646-b8963c02-3a7a-4d82-81b4-fc32eac45305.png)
+<div align="center">
+  <img height="300" src="https://github.com/user-attachments/assets/a207e3f4-a579-4ac4-afdd-11260fb188c9" />
+</div>
+
 
 ## Implementation details
 - The 4x8 LED matrix shows the basket using 2 consecutive LEDs on the bottom row and an egg using 1 LED in the first 3 rows.
 - The top-left button moves the basket to the left and the top-right button moves the basket to the right
 - The bottom-left button resets the game
 
-![image](https://user-images.githubusercontent.com/53337979/215928973-cb32a23e-d5d2-4eee-bb6e-e6c8b51495e3.png)
+<div align="center">
+  <img height="300" alt="image" src="https://github.com/user-attachments/assets/d838275e-f73a-4687-9f30-ab15c0bc2e6b" />
+</div>
 
 ## Simulation
 ```
@@ -31,8 +36,6 @@ make burn
 ```
 
 ## Future development
-- Game over screen using the LED matrix
 - Seed LFSR using random ADC value collected using USART
 - Sound effects using the buzzer
-
-### Made with lots of ⏱️, 📚 and ☕ by InputBlackBoxOutput
+- Game over screen using the LED matrix
